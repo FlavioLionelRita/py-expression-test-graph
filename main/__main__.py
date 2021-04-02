@@ -1,5 +1,6 @@
 
 import tkinter as tk
+from tkinter import messagebox
 from tkinter import ttk
 from ttkthemes import ThemedStyle
 
@@ -7,6 +8,7 @@ import matplotlib
 matplotlib.use("TkAgg")
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2TkAgg
 from matplotlib.figure import Figure
+import matplotlib.pyplot as plt
 
 from py_expression.core import Parser
 
@@ -24,6 +26,7 @@ class Event(object):
         for handler in self.__handlers: 
             handler(*args, **keywargs) 
 
+plt.style.use('dark_background')
 
 class Main(tk.Frame):
     def __init__(self, master,**kw):
@@ -89,18 +92,20 @@ class GraphPanel(tk.Frame):
         self.canvas._tkcanvas.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
 
     def show(self,expression):
-         
-        op = parser.parse(expression) 
-        xs=[]
-        ys=[] 
-        for x in range(-100,100):
-            y=op.eval({"x":x})
-            xs.append(x)
-            ys.append(y)  
+        try: 
+            op = parser.parse(expression) 
+            xs=[]
+            ys=[] 
+            for x in range(-100,100):
+                y=op.eval({"x":x})
+                xs.append(x)
+                ys.append(y)  
 
-        self.plot.clear()
-        self.plot.plot(xs,ys) 
-        self.canvas.draw()     
+            self.plot.clear()
+            self.plot.plot(xs,ys) 
+            self.canvas.draw() 
+        except Exception as error:
+            messagebox.showerror(title="Error", message=str(error))                   
 
 parser=Parser()
 
